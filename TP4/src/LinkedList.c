@@ -122,10 +122,8 @@ static int addNode(LinkedList* this, int nodeIndex,void* pElement)
 		}
 		this->size++;
 		returnAux =0;
-
 	}
-
-    return returnAux;
+ return returnAux;
 }
 
 /** \brief Permite realizar el test de la funcion addNode la cual es privada
@@ -345,18 +343,16 @@ int ll_isEmpty(LinkedList* this)
     int returnAux = -1;
     if(this != NULL)
     {
-
-    	if(ll_len(this))
-    	{
-    		returnAux = 0;
-    	}
-    	else
-    	{
-    		returnAux = 1;
-    	}
+		if(ll_len(this))
+		{
+			returnAux = 0;
+		}
+		else
+		{
+			returnAux = 1;
+		}
     }
-
-    return returnAux;
+ return returnAux;
 }
 
 /** \brief Inserta un nuevo elemento en la lista en la posicion indicada
@@ -373,11 +369,9 @@ int ll_push(LinkedList* this, int index, void* pElement)
     int returnAux = -1;
     if(this != NULL && index <= ll_len(this) && index >= 0)
     {
-
     	returnAux = addNode(this, index, pElement);
     }
-
-    return returnAux;
+ return returnAux;
 }
 
 
@@ -397,11 +391,8 @@ void* ll_pop(LinkedList* this,int index)
     {
     	returnAux = ll_get(this, index); //devuelvo elemento que esta guardado en el nodo de indice enviado
     	ll_remove(this, index); // elimino el nodo
-
-
     }
-
-    return returnAux;
+ return returnAux;
 }
 
 
@@ -459,8 +450,7 @@ int ll_containsAll(LinkedList* this,LinkedList* this2)
     		}
     	}
     }
-
-    return returnAux;
+return returnAux;
 }
 
 /** \brief Crea y retorna una nueva lista con los elementos indicados
@@ -476,7 +466,19 @@ int ll_containsAll(LinkedList* this,LinkedList* this2)
 LinkedList* ll_subList(LinkedList* this,int from,int to)
 {
     LinkedList* cloneArray = NULL;
-
+    void* pElementAux=NULL;
+    if(this != NULL  && to <= ll_len(this) && from >= 0 && to > from)
+    {
+    	cloneArray = ll_newLinkedList(); //inicializo una nueva lista
+    	if(cloneArray != NULL)
+    	{
+    		for(int i=from; i<to; i++)
+    		{
+    			pElementAux = ll_get(this, i);// ibtengo el elemento indicado desde mi lista Original
+    			ll_add(cloneArray, pElementAux); // agrego el elemento en mi lista clonada
+    		}
+    	}
+    }
     return cloneArray;
 }
 
@@ -491,6 +493,10 @@ LinkedList* ll_subList(LinkedList* this,int from,int to)
 LinkedList* ll_clone(LinkedList* this)
 {
     LinkedList* cloneArray = NULL;
+    if(this != NULL)
+    {
+    	cloneArray = ll_subList(this, 0, ll_len(this));
+    }
 
     return cloneArray;
 }
@@ -506,8 +512,103 @@ LinkedList* ll_clone(LinkedList* this)
 int ll_sort(LinkedList* this, int (*pFunc)(void* ,void*), int order)
 {
     int returnAux =-1;
+    int i;
+    int j;
+    void* elementoUno;
+    void* elementoDos;
+    int len;
 
-    return returnAux;
+    if(this != NULL && pFunc != NULL && order >= 0 && order <= 1)
+    {
+    	len = ll_len(this);
+    	for(i=0; i<len; i++)
+    	{
+
+    		for(j=i+1; j<len; j++)
+    		{
+    			elementoUno = ll_get(this, i);
+    			elementoDos = ll_get(this, j);
+
+    			if((pFunc(elementoUno,elementoDos)> 0 && order == 1) || (pFunc(elementoUno,elementoDos)<0 && order==0))
+    			{
+    				ll_set(this, j, elementoUno);
+    				ll_set(this, i, elementoDos);
+    		    	returnAux = 0;
+    			}
+    		}
+    	}
+    }
+   return returnAux;
+}
+/**
+ * @brief calcula con el elemento recibido
+ *
+ * @param this puntero a la linkedlist
+ * @param fn puntero a funcion criterio
+ * @return
+ */
+int ll_map(LinkedList* this, int(*fn)(void* element))
+{
+	int retorno=-1;
+
+	if(this != NULL && fn != NULL)
+	{
+		for(int i=0; i<=ll_len(this); i++)
+		{
+			fn(ll_get(this, i));
+			retorno=0;
+		}
+	}
+return retorno;
+}
+
+/**
+ * @brief
+ *
+ *
+ * @param this puntero a linkedlist
+ * @param fn puntero a funcion criterrio
+ * @return
+ */
+LinkedList* ll_filter(LinkedList* this, int(*fn)(void* element))
+{
+	LinkedList* listaFiltrada;
+	void* elemento;
+
+
+	if(this != NULL && fn != NULL)
+	{
+		listaFiltrada = ll_newLinkedList();
+		if(listaFiltrada != NULL)
+		{
+			for(int i=0; i<=ll_len(this); i++)
+			{
+				elemento = ll_get(this, i);
+				if(fn(elemento)>0)  // si la funcion criterio me retorna 1, agrego elemento a la lista
+				{
+					ll_add(listaFiltrada, elemento);
+				}
+			}
+		}
+	}
+	return listaFiltrada;
+}
+
+int ll_count(LinkedList* this, int(*fn)(void* elemento))
+{
+	int acumulador;
+	acumulador = 0;
+	int numeroretorno;
+
+	if(this != NULL && fn != NULL)
+	{
+		for(int i=0; i<=ll_len(this); i++)
+		{
+			numeroretorno =  fn(ll_get(this, i));
+			acumulador = acumulador + numeroretorno;
+		}
+	}
+	return acumulador;
 
 }
 
